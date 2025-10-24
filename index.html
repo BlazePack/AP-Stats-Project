@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Growth App</title>
+    <title>MLB Home Run Predictor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,316 +13,159 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
   </head>
   <body>
+    <!-- Navigation -->
     <nav class="navbar">
       <div class="container">
         <div class="logo">
-          <a href="index.html">
-            <img src="images/logo.png" alt="logo" />
-          </a>
+          <a href="#">⚾ MLB HR Predictor</a>
         </div>
 
         <div class="main-menu">
           <ul>
-            <li>
-              <a href="index.html">Home</a>
-            </li>
-            <li>
-              <a href="#">About Us</a>
-            </li>
-            <li>
-              <a href="#">Blog</a>
-            </li>
+            <li><a href="#model">3D Model</a></li>
+            <li><a href="#predictor">Predictor</a></li>
+            <li><a href="#data">Data</a></li>
+            <li><a href="#stats">Statistics</a></li>
           </ul>
         </div>
-        <!-- Hamburger Button -->
+
         <button class="hamburger-button">
           <div class="hamburger-line"></div>
           <div class="hamburger-line"></div>
           <div class="hamburger-line"></div>
         </button>
+
         <div class="mobile-menu">
           <ul>
-            <li>
-              <a href="index.html">Home</a>
-            </li>
-            <li>
-              <a href="#">About Us</a>
-            </li>
-            <li>
-              <a href="#">Blog</a>
-            </li>
+            <li><a href="#model">3D Model</a></li>
+            <li><a href="#predictor">Predictor</a></li>
+            <li><a href="#data">Data</a></li>
+            <li><a href="#stats">Statistics</a></li>
           </ul>
         </div>
       </div>
     </nav>
-    <!-- Hero -->
-    <section class="hero">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
       <div class="container">
-        <div class="hero-content">
-          <h1 class="hero-heading text-xxl">
-            A powerful solution to grow your startup. Fast!
-          </h1>
-          <p class="hero-text">
-            Organize, collaborate, and track progress seamlessly with our
-            one-stop-shop startup growth tool.
-          </p>
-          <div class="hero-buttons">
-            <a href="#" class="btn btn-primary">Get Started</a>
-            <a href="#" class="btn"
-              ><i class="fas fa-laptop"></i> Book a Demo</a
-            >
-          </div>
-        </div>
+        <h1>MLB Home Run Prediction Model</h1>
+        <p class="subtitle">Multiple Linear Regression Analysis: 2025 Season</p>
+        <p class="description">Predicting home runs based on player height and weight using advanced statistical modeling</p>
       </div>
     </section>
-    <!-- Video Section -->
-    <section class="video bg-black">
-      <div class="container-sm">
-        <h2 class="video-heading text-xl text-center">
-          See how it works and get started in less than 2 minutes
-        </h2>
-        <div class="video-content">
-          <a href="#">
-            <img
-              src="images/video-preview.png"
-              alt="video"
-              class="video-preview"
-            />
-          </a>
 
-          <a href="#" class="btn btn-primary">Get Started</a>
-        </div>
-      </div>
-    </section>
-    <!-- Testimonials -->
-    <section class="testimonials bg-dark">
+    <!-- 3D Visualization Section -->
+    <section id="model" class="model-section">
       <div class="container">
-        <h3 class="testimonials-heading text-xl">
-          Don't just take our word for it, see the success stories from
-          businesses just like yours.
-        </h3>
-        <div class="testimonials-grid">
-          <div class="card">
-            <p>
-              “Our business has seen a significant increase in productivity
-              since we started using the Growth app.”
-            </p>
+        <h2>Interactive 3D Regression Model</h2>
+        <p class="section-description">Rotate, zoom, and explore the relationship between height, weight, and home runs</p>
+        <div id="plot3d" class="plot-container"></div>
+      </div>
+    </section>
 
-            <p>Katherine Smith</p>
-            <p>Capodopera</p>
+    <!-- Statistics Section -->
+    <section id="stats" class="stats-section bg-light">
+      <div class="container">
+        <h2>Model Statistics</h2>
+        <div class="stats-grid">
+          <div class="stat-card card">
+            <div class="stat-icon">📈</div>
+            <h3>R² Score</h3>
+            <p class="stat-value" id="r2-score">Loading...</p>
+            <p class="stat-description">Model accuracy</p>
           </div>
-
-          <div class="card">
-            <p>
-              “As a small business owner, it's important to have a tool that can
-              help me keep track of everything. The Growth app has been a
-              lifesaver for me, allowing me to manage my contacts, schedule
-              appointments, and track progress all in one place..”
-            </p>
-
-            <p>Johnathan Lee</p>
-            <p>Red Bolt</p>
+          <div class="stat-card card">
+            <div class="stat-icon">📊</div>
+            <h3>RMSE</h3>
+            <p class="stat-value" id="rmse">Loading...</p>
+            <p class="stat-description">Root Mean Square Error</p>
           </div>
-
-          <div class="card">
-            <p>
-              “The dashboards and reporting feature has provided valuable
-              insights into our performance and helped us make data-driven
-              decisions. It's a game changer for us.”
-            </p>
-
-            <p>David Wilson</p>
-            <p>Slide</p>
+          <div class="stat-card card">
+            <div class="stat-icon">⚾</div>
+            <h3>Players</h3>
+            <p class="stat-value" id="player-count">Loading...</p>
+            <p class="stat-description">In dataset</p>
           </div>
+        </div>
+        
+        <div class="equation-card card">
+          <h3>Regression Equation</h3>
+          <p class="equation" id="equation">Loading...</p>
+          <div class="coefficients" id="coefficients"></div>
         </div>
       </div>
     </section>
 
-    <!-- Pricing -->
-    <section class="pricing">
+    <!-- Predictor Section -->
+    <section id="predictor" class="predictor-section">
       <div class="container-sm">
-        <h3 class="pricing-heading text-xl text-center">Pricing</h3>
-        <p class="pricing-subheading text-md text-center">
-          Start free and scale while you grow. No hidden fees. Unlimited users
-          for free.
-        </p>
-        <div class="pricing-grid">
-          <!-- Pricing Card 1 -->
-          <div class="card bg-light">
-            <div class="pricing-card-header">
-              <h4 class="pricing-heading text-xl">Simple</h4>
-              <p class="pricing-card-subheading">
-                Keep track of your contacts, gain valuable insights, analyse
-                live data and performance metrics.
-              </p>
-              <p class="pricing-card-price">
-                <span class="text-xl">Free</span>
-                *No credit card needed
-              </p>
-            </div>
-            <div class="pricing-card-body">
-              <ul>
-                <li><i class="fas fa-check"></i> Real-Time Monitoring</li>
-                <li>
-                  <i class="fas fa-check"></i>Track key performance indicators
-                </li>
-                <li><i class="fas fa-check"></i>Schedule appointments</li>
-                <li>
-                  <i class="fas fa-check"></i>Organize, delegate and keep track
-                  of tasks
-                </li>
-              </ul>
-              <a href="#" class="btn btn-primary btn-block">Get Started</a>
-            </div>
+        <h2>Home Run Predictor</h2>
+        <p class="section-description">Enter player measurements to predict home runs</p>
+        
+        <div class="predictor-card card">
+          <div class="input-group">
+            <label for="height-input">
+              <i class="fas fa-ruler-vertical"></i> Height (inches)
+            </label>
+            <input type="number" id="height-input" placeholder="e.g., 75" min="60" max="85" value="75">
           </div>
-
-          <!-- Pricing Card 2 -->
-          <div class="card bg-black">
-            <div class="pricing-card-header">
-              <h4 class="pricing-card-heading text-xl">Premium</h4>
-              <p class="pricing-card-subheading">
-                Keep track of your contacts, gain valuable insights, analyze
-                live data and performance metrics.
-              </p>
-              <p class="pricing-card-price">
-                <span class="text-xl">$49</span> /month
-              </p>
-            </div>
-            <div class="pricing-card-body">
-              <p>Everything from the free plan plus:</p>
-              <ul>
-                <li><i class="fas fa-check"></i>Data-driven decisions</li>
-                <li><i class="fas fa-check"></i>Data visualization</li>
-                <li><i class="fas fa-check"></i>Schedule appointments</li>
-              </ul>
-              <a href="#" class="btn btn-primary btn-block">Get Started</a>
-            </div>
+          
+          <div class="input-group">
+            <label for="weight-input">
+              <i class="fas fa-weight"></i> Weight (lbs)
+            </label>
+            <input type="number" id="weight-input" placeholder="e.g., 215" min="150" max="300" value="215">
           </div>
-        </div>
-        <p class="pricing-footer text-center">
-          All prices are in USD and charged per month with applicable taxes
-          added at checkout.
-        </p>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section class="faq bg-light">
-      <div class="container-sm">
-        <h3 class="text-xl text-center">Frequently Asked Questions</h3>
-        <ul class="faq-menu">
-          <li class="active">All</li>
-          <li>Getting Started</li>
-          <li>Pricing</li>
-        </ul>
-        <div class="faq-content">
-          <div class="faq-group">
-            <div class="faq-group-header">
-              <h4 class="text-md">
-                How does the contact management feature help me keep track of
-                clients and partners?
-              </h4>
-              <i class="fas fa-minus"></i>
-            </div>
-            <div class="faq-group-body open">
-              <p>
-                Keep track of your contacts, gain valuable insights, analyse
-                live data and performance metrics.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-group">
-            <div class="faq-group-header">
-              <h4 class="text-md">
-                Can I customize the dashboards and reporting feature to display
-                the metrics that are most important to my business?
-              </h4>
-              <i class="fas fa-plus"></i>
-            </div>
-            <div class="faq-group-body">
-              <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ad
-                culpa enim blanditiis rem ipsum aliquam, unde iste fugit
-                praesentium eos?
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-group">
-            <div class="faq-group-header">
-              <h4 class="text-md">
-                How does the task management feature help me delegate tasks to
-                my team and track progress?
-              </h4>
-              <i class="fas fa-plus"></i>
-            </div>
-            <div class="faq-group-body">
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Incidunt, a! Quaerat, voluptatum. Animi molestias ex quasi
-                explicabo minima perferendis commodi.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-group">
-            <div class="faq-group-header">
-              <h4 class="text-md">
-                Can I collaborate with my team in real-time using all tools?
-              </h4>
-              <i class="fas fa-plus"></i>
-            </div>
-            <div class="faq-group-body">
-              <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Obcaecati doloremque assumenda aut dolorem recusandae quibusdam
-                aliquid. Repellat animi quam vitae.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-group">
-            <div class="faq-group-header">
-              <h4 class="text-md">Is the app available on all devices?</h4>
-              <i class="fas fa-plus"></i>
-            </div>
-            <div class="faq-group-body">
-              <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Obcaecati doloremque assumenda aut dolorem recusandae quibusdam
-                aliquid. Repellat animi quam vitae.
-              </p>
-            </div>
-          </div>
-
-          <div class="faq-group">
-            <div class="faq-group-header">
-              <h4 class="text-md">
-                How does the app help me stay compliant when working with
-                freelancers and contractors?
-              </h4>
-              <i class="fas fa-plus"></i>
-            </div>
-            <div class="faq-group-body">
-              <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Obcaecati doloremque assumenda aut dolorem recusandae quibusdam
-                aliquid. Repellat animi quam vitae.
-              </p>
-            </div>
+          
+          <button class="btn btn-predict" onclick="predictHomeRuns()">
+            <i class="fas fa-calculator"></i> Predict Home Runs
+          </button>
+          
+          <div class="prediction-result" id="prediction-result" style="display: none;">
+            <h3>Predicted Home Runs</h3>
+            <p class="prediction-value" id="prediction-value"></p>
           </div>
         </div>
       </div>
     </section>
+
+    <!-- Data Table Section -->
+    <section id="data" class="data-section bg-light">
+      <div class="container">
+        <h2>Player Data</h2>
+        <p class="section-description">2025 MLB Regular Season Statistics</p>
+        
+        <div class="table-controls">
+          <input type="text" id="search-input" placeholder="🔍 Search players..." class="search-box">
+          <button class="btn btn-sort" onclick="sortTable('hr')">Sort by HR</button>
+        </div>
+        
+        <div class="table-container">
+          <table id="data-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Home Runs</th>
+                <th>Height (in)</th>
+                <th>Weight (lbs)</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- Data will be inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <script src="js/main.js"></script>
   </body>
 </html>
