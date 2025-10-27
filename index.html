@@ -17,14 +17,15 @@
       referrerpolicy="no-referrer"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
-    <link rel="stylesheet" href="css/style.css" />
+    <!-- versioned stylesheet to force fresh load when updated -->
+    <link rel="stylesheet" href="css/style.css?v=3" />
   </head>
   <body>
     <!-- Navigation -->
     <nav class="navbar">
       <div class="container">
         <div class="logo">
-          <a href="#">⚾ MLB HR Predictor</a>
+          <a href="#">MLB HR Predictor</a>
         </div>
 
         <div class="main-menu">
@@ -33,6 +34,7 @@
             <li><a href="#predictor">Predictor</a></li>
             <li><a href="#data">Data</a></li>
             <li><a href="#stats">Statistics</a></li>
+            <li><a href="#report">Research Report</a></li>
           </ul>
         </div>
 
@@ -48,6 +50,7 @@
             <li><a href="#predictor">Predictor</a></li>
             <li><a href="#data">Data</a></li>
             <li><a href="#stats">Statistics</a></li>
+            <li><a href="#report">Research Report</a></li>
           </ul>
         </div>
       </div>
@@ -76,23 +79,91 @@
       <div class="container">
         <h2>Model Statistics</h2>
         <div class="stats-grid">
-          <div class="stat-card card">
-            <div class="stat-icon">📈</div>
-            <h3>R² Score</h3>
-            <p class="stat-value" id="r2-score">Loading...</p>
-            <p class="stat-description">Model accuracy</p>
+          <div class="stat-flip-card">
+            <div class="content">
+              <div class="front">
+                <div class="img">
+                  <div class="circle"></div>
+                  <div class="circle" id="right"></div>
+                  <div class="circle" id="bottom"></div>
+                </div>
+                <div class="front-content">
+                  <div class="description">
+                    <div class="title">
+                      <p class="title"><strong>R² Score</strong></p>
+                      <svg fill="#667eea" height="15px" width="15px" viewBox="0,0,256,256" xmlns="http://www.w3.org/2000/svg">
+                        <g><path d="M25,27l-9,-6.75l-9,6.75v-23h18z"></path></g>
+                      </svg>
+                    </div>
+                    <p class="card-footer" id="r2-score">Loading...</p>
+                  </div>
+                </div>
+              </div>
+              <div class="back">
+                <div class="back-content">
+                  <strong>Our R² Score?</strong>
+                  <p>This model produced a R² of around 0.2, showing a small fit in predicting home runs based on weight and height.</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="stat-card card">
-            <div class="stat-icon">📊</div>
-            <h3>RMSE</h3>
-            <p class="stat-value" id="rmse">Loading...</p>
-            <p class="stat-description">Root Mean Square Error</p>
+
+          <div class="stat-flip-card">
+            <div class="content">
+              <div class="front">
+                <div class="img">
+                  <div class="circle"></div>
+                  <div class="circle" id="right"></div>
+                  <div class="circle" id="bottom"></div>
+                </div>
+                <div class="front-content">
+                  <div class="description">
+                    <div class="title">
+                      <p class="title"><strong>RMSE</strong></p>
+                      <svg fill="#764ba2" height="15px" width="15px" viewBox="0,0,256,256" xmlns="http://www.w3.org/2000/svg">
+                        <g><path d="M25,27l-9,-6.75l-9,6.75v-23h18z"></path></g>
+                      </svg>
+                    </div>
+                    <p class="card-footer" id="rmse">Loading...</p>
+                  </div>
+                </div>
+              </div>
+              <div class="back">
+                <div class="back-content">
+                  <strong>Our RMSE?</strong>
+                  <p>Our Root Mean Square Error showed that on average our models prediction was 9.7 home runs off of the real mark.</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="stat-card card">
-            <div class="stat-icon">⚾</div>
-            <h3>Players</h3>
-            <p class="stat-value" id="player-count">Loading...</p>
-            <p class="stat-description">In dataset</p>
+
+          <div class="stat-flip-card">
+            <div class="content">
+              <div class="front">
+                <div class="img">
+                  <div class="circle"></div>
+                  <div class="circle" id="right"></div>
+                  <div class="circle" id="bottom"></div>
+                </div>
+                <div class="front-content">
+                  <div class="description">
+                    <div class="title">
+                      <p class="title"><strong>Players</strong></p>
+                      <svg fill="#2563eb" height="15px" width="15px" viewBox="0,0,256,256" xmlns="http://www.w3.org/2000/svg">
+                        <g><path d="M25,27l-9,-6.75l-9,6.75v-23h18z"></path></g>
+                      </svg>
+                    </div>
+                    <p class="card-footer" id="player-count">Loading...</p>
+                  </div>
+                </div>
+              </div>
+              <div class="back">
+                <div class="back-content">
+                  <strong>Our Dataset Size</strong>
+                  <p>In this dataset I used the 100 players with the most at bats in the 2025 MLB regular season.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -112,21 +183,63 @@
         
         <div class="predictor-card card">
           <div class="input-group">
+            <input type="number" id="height-input" placeholder=" " min="60" max="85" value="75">
             <label for="height-input">
               <i class="fas fa-ruler-vertical"></i> Height (inches)
             </label>
-            <input type="number" id="height-input" placeholder="e.g., 75" min="60" max="85" value="75">
           </div>
           
           <div class="input-group">
+            <input type="number" id="weight-input" placeholder=" " min="150" max="300" value="215">
             <label for="weight-input">
               <i class="fas fa-weight"></i> Weight (lbs)
             </label>
-            <input type="number" id="weight-input" placeholder="e.g., 215" min="150" max="300" value="215">
           </div>
           
           <button class="btn btn-predict" onclick="predictHomeRuns()">
             <i class="fas fa-calculator"></i> Predict Home Runs
+            <div class="star-1">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                <g id="Layer_x0020_1">
+                  <path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" class="fil0"></path>
+                </g>
+              </svg>
+            </div>
+            <div class="star-2">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                <g id="Layer_x0020_1">
+                  <path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" class="fil0"></path>
+                </g>
+              </svg>
+            </div>
+            <div class="star-3">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                <g id="Layer_x0020_1">
+                  <path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" class="fil0"></path>
+                </g>
+              </svg>
+            </div>
+            <div class="star-4">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                <g id="Layer_x0020_1">
+                  <path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" class="fil0"></path>
+                </g>
+              </svg>
+            </div>
+            <div class="star-5">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                <g id="Layer_x0020_1">
+                  <path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" class="fil0"></path>
+                </g>
+              </svg>
+            </div>
+            <div class="star-6">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
+                <g id="Layer_x0020_1">
+                  <path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" class="fil0"></path>
+                </g>
+              </svg>
+            </div>
           </button>
           
           <div class="prediction-result" id="prediction-result" style="display: none;">
@@ -144,8 +257,10 @@
         <p class="section-description">2025 MLB Regular Season Statistics</p>
         
         <div class="table-controls">
-          <input type="text" id="search-input" placeholder="🔍 Search players..." class="search-box">
-          <button class="btn btn-sort" onclick="sortTable('hr')">Sort by HR</button>
+          <input type="text" id="search-input" placeholder="Search players..." class="search-box">
+          <button class="btn btn-sort_hr" onclick="sortTable('hr')">Sort by HR</button>
+          <button class="btn btn-sort_height" onclick="sortTable('height')">Sort by Height</button>
+          <button class="btn btn-sort_weight" onclick="sortTable('weight')">Sort by Weight</button>
         </div>
         
         <div class="table-container">
@@ -162,6 +277,142 @@
               <!-- Data will be inserted here -->
             </tbody>
           </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Research Report Section -->
+    <section id="report" class="report-section">
+      <div class="container">
+        <h2>Statistical Research Report</h2>
+        <p class="section-description">AP Statistics Analysis: Physical Attributes and Home Run Production</p>
+
+        <!-- Introduction -->
+        <div class="report-card card">
+          <h3>📊 Research Question</h3>
+          <p class="question-highlight">
+            "Do physical attributes—specifically player height and weight—significantly predict home run production in Major League Baseball during the 2025 regular season?"
+          </p>
+          <p class="report-text">
+            This study looks at whether a baseball player’s height and weight can help predict how well they hit for power, specifically focusing on whether taller and heavier players tend to hit more home runs overall. Understanding this connection could reveal how a player’s physical size and overall build give them a natural advantage in generating bat speed and power.
+          </p>
+        </div>
+
+        <!-- Context -->
+        <div class="report-card card">
+          <h3>⚾ Context & Background</h3>
+          <p class="report-text">
+            Major League Baseball has long debated the relationship between physical stature and power hitting. Our dataset encompasses 
+            <strong id="report-player-count">100</strong> MLB players from the 2025 regular season, representing diverse body types and hitting profiles.
+          </p>
+          <h4>Notable Players in Dataset:</h4>
+          <ul class="report-list">
+            <li><strong>Cal Raleigh (SEA)</strong> - Led the league with 60 home runs at 6'2" and 235 lbs</li>
+            <li><strong>Kyle Schwarber (PHI)</strong> - Hit 56 home runs at 5'11" and 229 lbs</li>
+            <li><strong>Aaron Judge (NYY)</strong> - 53 home runs at 6'7" and 282 lbs (tallest/heaviest)</li>
+            <li><strong>Jose Altuve (HOU)</strong> - 26 home runs at 5'6" and 167 lbs (shortest/lightest power hitter)</li>
+          </ul>
+          <h4>Explanatory Variables:</h4>
+          <ul class="report-list">
+            <li><strong>Height (inches)</strong> - Range: 66 inches to 79 inces (5'6 to 6'7)</li>
+            <li><strong>Weight (pounds)</strong> - Range: 165 lbs to 282 lbs</li>
+          </ul>
+          <h4>Response Variable:</h4>
+          <ul class="report-list">
+            <li><strong>Home Runs</strong> - Total home runs hit during the 2025 regular season</li>
+          </ul>
+        </div>
+
+        <!-- Height Analysis -->
+        <div class="report-card card">
+          <h3>📈 Height vs. Home Runs Analysis</h3>
+          <div id="height-scatter" class="scatter-container"></div>
+          <h4>Association Description:</h4>
+          <p class="report-text">
+            The scatterplot reveals a <strong>weak positive linear relationship</strong> between player height and home run production. 
+            While there is a general upward trend suggesting taller players tend to hit more home runs, the relationship shows high 
+            variability. The correlation is modest, with numerous outliers—both shorter players with high home run totals and taller players 
+            with lower output—indicating that height alone is not a strong predictor.
+          </p>
+          <h4>Regression Equation:</h4>
+          <p class="equation-display" id="height-equation">Loading...</p>
+          <h4>Slope Interpretation:</h4>
+          <p class="report-text" id="height-slope-interpretation">Loading...</p>
+          <h4>Standard Deviation of Residuals:</h4>
+          <p class="report-text" id="height-residuals">Loading...</p>
+        </div>
+
+        <!-- Weight Analysis -->
+        <div class="report-card card">
+          <h3>📈 Weight vs. Home Runs Analysis</h3>
+          <div id="weight-scatter" class="scatter-container"></div>
+          <h4>Association Description:</h4>
+          <p class="report-text">
+            The scatterplot displays a <strong>weak positive linear relationship</strong> between player weight and home runs. 
+            Similar to height, heavier players show a slight tendency toward more home runs, but the association is not strong. 
+            The data shows high variability with several outliers, suggesting that a players weight alone doesnt do much to predict 
+            home runs. Many lighter players achieve high home run totals, indicating that factors beyond weight contribute significantly to power hitting.
+          </p>
+          <h4>Regression Equation:</h4>
+          <p class="equation-display" id="weight-equation">Loading...</p>
+          <h4>Slope Interpretation:</h4>
+          <p class="report-text" id="weight-slope-interpretation">Loading...</p>
+          <h4>Standard Deviation of Residuals:</h4>
+          <p class="report-text" id="weight-residuals">Loading...</p>
+        </div>
+
+        <!-- Multiple Regression Analysis -->
+        <div class="report-card card">
+          <h3>📊 Multiple Linear Regression Analysis</h3>
+          <p class="report-text">
+            To better understand the combined effect of both physical attributes, we developed a multiple linear regression model 
+            incorporating both height and weight as predictors.
+          </p>
+          <h4>Multiple Regression Equation:</h4>
+          <p class="equation-display" id="multiple-equation">Loading...</p>
+          <h4>Model Performance:</h4>
+          <ul class="report-list">
+            <li><strong>R² Score:</strong> <span id="report-r2">Loading...</span> - This indicates that approximately <span id="report-r2-percent">0</span>% of the variation in home runs can be explained by height and weight combined.</li>
+            <li><strong>RMSE:</strong> <span id="report-rmse">Loading...</span> home runs - On average, our predictions are off by about <span id="report-rmse-round">0</span> home runs.</li>
+          </ul>
+        </div>
+
+        <!-- Conclusion -->
+        <div class="report-card card">
+          <h3>🎯 Conclusion</h3>
+          <p class="report-text">
+            Based on our statistical analysis of the 2025 MLB season data, we can conclude that <strong>height and weight are weak to moderate predictors 
+            of home run production</strong>. While both variables show positive associations with home runs, the relationships are not strong enough to 
+            make physical stature the primary determinant of power hitting.
+          </p>
+          <h4>Key Findings:</h4>
+          <ul class="report-list">
+            <li>The multiple regression model has limited predictive power (low R²), suggesting many other factors play major roles</li>
+            <li>Notable outliers exist: shorter, lighter players (like Jose Altuve) can be prolific home run hitters</li>
+            <li>Taller, heavier players have a <em>slight</em> statistical advantage, but exceptions are common</li>
+            <li>Skills such as bat speed, swing mechanics, pitch recognition, and timing likely matter more than physical dimensions</li>
+          </ul>
+          <p class="report-text">
+            <strong>Answer to Research Question:</strong> Physical attributes do matter to some degree in predicting home runs, but their influence 
+            is modest. Height and weight alone cannot reliably predict a player's power-hitting capability. Baseball remains a sport where technique, 
+            timing, and skill can overcome physical disadvantages, making it accessible to players of various body types.
+          </p>
+        </div>
+
+        <!-- Methodology -->
+        <div class="report-card card">
+          <h3>🔬 Methodology</h3>
+          <p class="report-text">
+            <strong>Data Collection:</strong> Player statistics collected from the 2025 MLB regular season, including height (inches), 
+            weight (pounds), and total home runs hit.
+          </p>
+          <p class="report-text">
+            <strong>Statistical Methods:</strong> Simple linear regression for individual predictors, multiple linear regression for combined analysis, 
+            calculation of correlation coefficients, residual analysis, and least-squares estimation.
+          </p>
+          <p class="report-text">
+            <strong>Sample Size:</strong> <span id="report-total-players">100</span> MLB players
+          </p>
         </div>
       </div>
     </section>

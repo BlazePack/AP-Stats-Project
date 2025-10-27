@@ -110,14 +110,12 @@ function calculateRegression() {
   const X = mlbData.map(d => [1, d.height, d.weight]);
   const y = mlbData.map(d => d.hr);
   
-  // Matrix calculations for Multiple Linear Regression
   const XT = transpose(X);
   const XTX = multiplyMatrices(XT, X);
   const XTXinv = invertMatrix(XTX);
   const XTy = multiplyMatrixVector(XT, y);
   const beta = multiplyMatrixVector(XTXinv, XTy);
   
-  // Calculate predictions and R²
   const predictions = X.map(row => 
     beta[0] + beta[1] * row[1] + beta[2] * row[2]
   );
@@ -128,8 +126,6 @@ function calculateRegression() {
     sum + Math.pow(yi - predictions[i], 2), 0
   );
   const r2 = 1 - (ssResidual / ssTotal);
-  
-  // Calculate RMSE
   const rmse = Math.sqrt(ssResidual / n);
   
   model = {
@@ -143,7 +139,6 @@ function calculateRegression() {
   return model;
 }
 
-// Matrix helper functions
 function transpose(matrix) {
   return matrix[0].map((_, i) => matrix.map(row => row[i]));
 }
@@ -204,7 +199,6 @@ function invertMatrix(matrix) {
   return augmented.map(row => row.slice(n));
 }
 
-// Create 3D Plot
 function create3DPlot() {
   calculateRegression();
   
@@ -226,10 +220,9 @@ function create3DPlot() {
     },
     text: mlbData.map(d => `${d.player}<br>HR: ${d.hr}<br>Height: ${d.height}"<br>Weight: ${d.weight} lbs`),
     hoverinfo: 'text',
-    name: 'Players'
+    showlegend: false
   };
   
-  // Create regression plane
   const heightRange = [Math.min(...mlbData.map(d => d.height)), 
                         Math.max(...mlbData.map(d => d.height))];
   const weightRange = [Math.min(...mlbData.map(d => d.weight)), 
@@ -283,10 +276,11 @@ function create3DPlot() {
       text: '3D Multiple Linear Regression Model',
       font: { size: 20, color: '#0f172a' }
     },
-    showlegend: true,
+    showlegend: false,
     hovermode: 'closest',
-    paper_bgcolor: 'white',
-    plot_bgcolor: 'white'
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    margin: { l: 0, r: 0, b: 0, t: 50, pad: 0 }
   };
   
   const config = {
@@ -296,15 +290,19 @@ function create3DPlot() {
   };
   
   Plotly.newPlot('plot3d', [trace1, trace2], layout, config);
-  
-  // Update statistics
   updateStatistics();
 }
 
 function updateStatistics() {
-  document.getElementById('r2-score').textContent = model.r2.toFixed(4);
-  document.getElementById('rmse').textContent = model.rmse.toFixed(2);
-  document.getElementById('player-count').textContent = mlbData.length;
+  setTimeout(() => {
+    animateValue('r2-score', 0, model.r2, 1500, 4);
+  }, 300);
+  setTimeout(() => {
+    animateValue('rmse', 0, model.rmse, 1500, 2);
+  }, 600);
+  setTimeout(() => {
+    animateValue('player-count', 0, mlbData.length, 1000, 0);
+  }, 900);
   
   const equation = `HR = ${model.intercept.toFixed(2)} + ${model.heightCoef.toFixed(2)} × Height + ${model.weightCoef.toFixed(2)} × Weight`;
   document.getElementById('equation').textContent = equation;
@@ -326,6 +324,22 @@ function updateStatistics() {
   document.getElementById('coefficients').innerHTML = coefficientsHTML;
 }
 
+function animateValue(id, start, end, duration, decimals = 0) {
+  const element = document.getElementById(id);
+  const range = end - start;
+  const increment = range / (duration / 16);
+  let current = start;
+  
+  const timer = setInterval(() => {
+    current += increment;
+    if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+      current = end;
+      clearInterval(timer);
+    }
+    element.textContent = current.toFixed(decimals);
+  }, 16);
+}
+
 function predictHomeRuns() {
   const height = parseFloat(document.getElementById('height-input').value);
   const weight = parseFloat(document.getElementById('weight-input').value);
@@ -336,25 +350,60 @@ function predictHomeRuns() {
   }
   
   const prediction = model.intercept + model.heightCoef * height + model.weightCoef * weight;
+  const roundedPrediction = Math.round(prediction);
   
-  document.getElementById('prediction-value').textContent = Math.round(prediction);
-  document.getElementById('prediction-result').style.display = 'block';
+  const resultElement = document.getElementById('prediction-result');
+  resultElement.style.display = 'block';
+  
+  animateValue('prediction-value', 0, roundedPrediction, 1000, 0);
 }
 
-// Populate data table
-function populateTable() {
+let tablePage = 0;
+const pageSize = 20;
+
+function populateTable(reset = false) {
   const tbody = document.getElementById('table-body');
-  tbody.innerHTML = mlbData.map(player => `
-    <tr>
+  if (reset) tablePage = 0;
+  const start = 0;
+  const end = Math.min((tablePage + 1) * pageSize, mlbData.length);
+  tbody.innerHTML = '';
+  for (let i = start; i < end; i++) {
+    const player = mlbData[i];
+    const row = document.createElement('tr');
+    row.innerHTML = `
       <td>${player.player} (${player.team})</td>
       <td>${player.hr}</td>
       <td>${player.height}</td>
       <td>${player.weight}</td>
-    </tr>
-  `).join('');
+    `;
+    tbody.appendChild(row);
+  }
+  renderShowMoreButton(end);
 }
 
-// Search functionality
+function renderShowMoreButton(currentEnd) {
+  let btn = document.getElementById('show-more-btn');
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'show-more-btn';
+    btn.textContent = 'Show More';
+    btn.className = 'btn';
+    btn.style.display = 'block';
+    btn.style.margin = '20px auto';
+    btn.onclick = () => {
+      tablePage++;
+      populateTable();
+    };
+    const tableContainer = document.querySelector('.table-container');
+    tableContainer.parentNode.insertBefore(btn, tableContainer.nextSibling);
+  }
+  if (currentEnd >= mlbData.length) {
+    btn.style.display = 'none';
+  } else {
+    btn.style.display = 'block';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('search-input');
   if (searchInput) {
@@ -374,24 +423,187 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Sort table
 function sortTable(column) {
   const tbody = document.getElementById('table-body');
   const rows = Array.from(tbody.querySelectorAll('tr'));
   
-  const columnIndex = column === 'hr' ? 1 : 0;
+  let columnIndex;
+  if (column === 'hr') {
+    columnIndex = 1;
+  } else if (column === 'height') {
+    columnIndex = 2;
+  } else if (column === 'weight') {
+    columnIndex = 3;
+  } else {
+    columnIndex = 0;
+  }
   
   rows.sort((a, b) => {
     const aVal = parseInt(a.cells[columnIndex].textContent);
     const bVal = parseInt(b.cells[columnIndex].textContent);
+    if (columnIndex === 0) {
+      return a.cells[0].textContent.localeCompare(b.cells[0].textContent);
+    }
     return bVal - aVal;
   });
+
+  rows.forEach(row => {
+    row.style.transition = 'opacity 0.3s';
+    row.style.opacity = '0';
+  });
   
-  tbody.innerHTML = '';
-  rows.forEach(row => tbody.appendChild(row));
+  setTimeout(() => {
+    tbody.innerHTML = '';
+    rows.forEach(row => {
+      row.style.opacity = '0';
+      tbody.appendChild(row);
+    });
+    setTimeout(() => {
+      rows.forEach(row => {
+        row.style.opacity = '1';
+      });
+    }, 50);
+  }, 300);
 }
 
-// Mobile Menu Toggle
+function generateReportGraphs() {
+  const n = mlbData.length;
+  
+  const heights = mlbData.map(d => d.height);
+  const hrs = mlbData.map(d => d.hr);
+  const heightMean = heights.reduce((a, b) => a + b) / n;
+  const hrMean = hrs.reduce((a, b) => a + b) / n;
+  
+  let heightCov = 0;
+  let heightVar = 0;
+  for (let i = 0; i < n; i++) {
+    heightCov += (heights[i] - heightMean) * (hrs[i] - hrMean);
+    heightVar += Math.pow(heights[i] - heightMean, 2);
+  }
+  const heightSlope = heightCov / heightVar;
+  const heightIntercept = hrMean - heightSlope * heightMean;
+  
+  const heightResiduals = mlbData.map((d, i) => 
+    d.hr - (heightIntercept + heightSlope * d.height)
+  );
+  const heightSSR = heightResiduals.reduce((sum, r) => sum + r * r, 0);
+  const heightSDResiduals = Math.sqrt(heightSSR / (n - 2));
+  
+  const weights = mlbData.map(d => d.weight);
+  const weightMean = weights.reduce((a, b) => a + b) / n;
+  
+  let weightCov = 0;
+  let weightVar = 0;
+  for (let i = 0; i < n; i++) {
+    weightCov += (weights[i] - weightMean) * (hrs[i] - hrMean);
+    weightVar += Math.pow(weights[i] - weightMean, 2);
+  }
+  const weightSlope = weightCov / weightVar;
+  const weightIntercept = hrMean - weightSlope * weightMean;
+  
+  const weightResiduals = mlbData.map((d, i) => 
+    d.hr - (weightIntercept + weightSlope * d.weight)
+  );
+  const weightSSR = weightResiduals.reduce((sum, r) => sum + r * r, 0);
+  const weightSDResiduals = Math.sqrt(weightSSR / (n - 2));
+  
+  const heightTrace = {
+    x: heights,
+    y: hrs,
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+      size: 8,
+      color: '#667eea',
+      opacity: 0.6
+    },
+    text: mlbData.map(d => `${d.player}: ${d.hr} HR, ${d.height}"`),
+    hoverinfo: 'text',
+    name: 'Players'
+  };
+  
+  const heightLine = {
+    x: [Math.min(...heights), Math.max(...heights)],
+    y: [heightIntercept + heightSlope * Math.min(...heights),
+        heightIntercept + heightSlope * Math.max(...heights)],
+    mode: 'lines',
+    line: { color: '#dc2626', width: 3 },
+    name: 'Regression Line'
+  };
+  
+  const heightLayout = {
+    xaxis: { title: 'Height (inches)' },
+    yaxis: { title: 'Home Runs' },
+    title: 'Height vs. Home Runs',
+    hovermode: 'closest',
+    showlegend: true
+  };
+  
+  Plotly.newPlot('height-scatter', [heightTrace, heightLine], heightLayout, {responsive: true, displaylogo: false});
+  
+  const weightTrace = {
+    x: weights,
+    y: hrs,
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+      size: 8,
+      color: '#764ba2',
+      opacity: 0.6
+    },
+    text: mlbData.map(d => `${d.player}: ${d.hr} HR, ${d.weight} lbs`),
+    hoverinfo: 'text',
+    name: 'Players'
+  };
+  
+  const weightLine = {
+    x: [Math.min(...weights), Math.max(...weights)],
+    y: [weightIntercept + weightSlope * Math.min(...weights),
+        weightIntercept + weightSlope * Math.max(...weights)],
+    mode: 'lines',
+    line: { color: '#dc2626', width: 3 },
+    name: 'Regression Line'
+  };
+  
+  const weightLayout = {
+    xaxis: { title: 'Weight (pounds)' },
+    yaxis: { title: 'Home Runs' },
+    title: 'Weight vs. Home Runs',
+    hovermode: 'closest',
+    showlegend: true
+  };
+  
+  Plotly.newPlot('weight-scatter', [weightTrace, weightLine], weightLayout, {responsive: true, displaylogo: false});
+  
+  document.getElementById('height-equation').textContent = 
+    `HR = ${heightIntercept.toFixed(2)} + ${heightSlope.toFixed(2)} × Height`;
+  
+  document.getElementById('height-slope-interpretation').textContent = 
+    `For each additional inch in height, we predict an increase of ${heightSlope.toFixed(2)} home runs, on average. ${heightSlope > 0 ? 'This suggests taller players tend to hit slightly more home runs.' : 'This suggests height has minimal impact on home run production.'}`;
+  
+  document.getElementById('height-residuals').textContent = 
+    `s = ${heightSDResiduals.toFixed(2)} home runs. This means the typical prediction error when using height alone is about ${Math.round(heightSDResiduals)} home runs.`;
+  
+  document.getElementById('weight-equation').textContent = 
+    `HR = ${weightIntercept.toFixed(2)} + ${weightSlope.toFixed(2)} × Weight`;
+  
+  document.getElementById('weight-slope-interpretation').textContent = 
+    `For each additional pound of body weight, we predict an increase of ${weightSlope.toFixed(2)} home runs, on average. ${weightSlope > 0 ? 'This suggests heavier players tend to hit slightly more home runs.' : 'This suggests weight has minimal impact on home run production.'}`;
+  
+  document.getElementById('weight-residuals').textContent = 
+    `s = ${weightSDResiduals.toFixed(2)} home runs. This means the typical prediction error when using weight alone is about ${Math.round(weightSDResiduals)} home runs.`;
+  
+  document.getElementById('multiple-equation').textContent = 
+    `HR = ${model.intercept.toFixed(2)} + ${model.heightCoef.toFixed(2)} × Height + ${model.weightCoef.toFixed(2)} × Weight`;
+  
+  document.getElementById('report-r2').textContent = model.r2.toFixed(4);
+  document.getElementById('report-r2-percent').textContent = (model.r2 * 100).toFixed(1);
+  document.getElementById('report-rmse').textContent = model.rmse.toFixed(2);
+  document.getElementById('report-rmse-round').textContent = Math.round(model.rmse);
+  document.getElementById('report-player-count').textContent = mlbData.length;
+  document.getElementById('report-total-players').textContent = mlbData.length;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const hamburgerButton = document.querySelector('.hamburger-button');
   const mobileMenu = document.querySelector('.mobile-menu');
@@ -410,7 +622,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Smooth scrolling
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
@@ -424,8 +635,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// Initialize everything when page loads
 window.addEventListener('load', () => {
   create3DPlot();
-  populateTable();
+  populateTable(true);
+  generateReportGraphs();
 });
